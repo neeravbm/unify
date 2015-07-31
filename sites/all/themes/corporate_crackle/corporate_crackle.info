@@ -1,0 +1,47 @@
+name = Corporate Crackle
+description = Premium Corporate Crackle Theme
+core = 7.x
+
+regions[top_bar_left] = Top Bar Left
+regions[top_bar_right] = Top Bar Right
+regions[header] = Header
+regions[help] = Help
+regions[page_top] = Page top
+regions[page_bottom] = Page bottom
+regions[featured] = Featured
+
+regions[content_top] = Content top
+regions[content] = Content
+regions[content_bottom] = Content bottom
+regions[sidebar_first] = Sidebar first
+regions[sidebar_second] = Sidebar second
+
+regions[triptych_first] = Triptych first
+regions[triptych_middle] = Triptych middle
+regions[triptych_last] = Triptych last
+
+regions[footer_firstcolumn] = Footer first column
+regions[footer_secondcolumn] = Footer second column
+regions[footer_thirdcolumn] = Footer third column
+regions[footer_fourthcolumn] = Footer fourth column
+regions[footer_bottom_first] = Footer bottom first
+regions[footer_bottom_second] = Footer bottom second
+
+settings[shortcut_module_link] = 0
+
+stylesheets[all][] = assets/plugins/bootstrap/css/bootstrap.min.css
+stylesheets[all][] = assets/css/style.css
+stylesheets[all][] = assets/css/headers/header-v1.css
+stylesheets[all][] = assets/css/footers/footer-v1.css
+stylesheets[all][] = assets/plugins/animate.css
+stylesheets[all][] = assets/plugins/line-icons/line-icons.css
+stylesheets[all][] = assets/plugins/font-awesome/css/font-awesome.css
+stylesheets[all][] = assets/css/theme-colors/default.css
+stylesheets[all][] = assets/css/custom.css
+
+;scripts[] = assets/plugins/jquery/jquery-migrate.min.js
+scripts[] = assets/plugins/bootstrap/js/bootstrap.min.js
+scripts[] = assets/plugins/back-to-top.js
+scripts[] = assets/plugins/smoothScroll.js
+scripts[] = assets/js/custom.js
+scripts[] = assets/js/app.js

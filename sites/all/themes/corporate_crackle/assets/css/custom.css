@@ -1,0 +1,68 @@
+/* Add here all your css styles (customizations) */
+.header-v1 .top-v1-data ul {
+    padding-left: 0;
+}
+
+.element-invisible {
+    display: none;
+}
+
+.dropdown-menu {
+    top: auto;
+}
+
+.view-id-slideshows.view-display-id-block .slider-wrapper {
+    border: none;
+}
+
+.view-id-slideshows.view-display-id-block .slider {
+    background: transparent url(../plugins/parallax-slider/img/bg.jpg) repeat 0% 0%;
+    width: 100%;
+    height: 427px;
+}
+
+.headline h1 {
+    margin: 0 0 -2px 0;
+    padding-bottom: 5px;
+    display: inline-block;
+    border-bottom: 2px solid #72c02c;
+}
+
+ul.tabs {
+    padding-left: 0;
+}
+
+ul.tabs li {
+    display: inline;
+    margin-right: 10px;
+}
+
+ul.tabs li a {
+    display: inline-block;
+    padding: 5px;
+    border: 1px solid #666;
+}
+
+ul.tabs li.active a {
+    border: 1px solid #72c02c;
+}
+
+.content {
+    padding: 0;
+}
+
+.view-id-projects.view-display-id-block .owl-stage {
+    padding-top: 5px;
+}
+
+.portfolio-item h2 {
+    margin-top: 10px;
+}
+
+.portfolio-item p a {
+    text-decoration: none;
+}
+
+.header-v1 .navbar-default .navbar-nav > li > a.search-link {
+    padding-right: 0;
+}

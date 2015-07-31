@@ -1,0 +1,34 @@
+<?php
+
+
+/**
+ * Implements hook_schema().
+ */
+function owlcarousel2_schema() {
+  $schema['owlcarousel2_settings'] = array(
+    'description' => t('Owl carousel settings'),
+    'fields' => array(
+      'nid' => array(
+        'description' => t('Node id'),
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'settings' => array(
+        'description' => t('Settings'),
+        'type' => 'varchar',
+        'length' => 2047,
+        'not empty' => TRUE,
+      ),
+    ),
+    'primary key' => array('nid'),
+    'foreign keys' => array(
+      'nid' => array(
+        'table' => 'node',
+        'columns' => array('nid' => 'nid'),
+      ),
+    ),
+  );
+
+  return $schema;
+}

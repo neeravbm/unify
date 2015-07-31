@@ -1,0 +1,5 @@
+name = RC Mega Menu
+description = Red Crackle Mega Menu
+core = 7.x
+files[] = rc_megamenu.module
+dependencies[] = menu_block

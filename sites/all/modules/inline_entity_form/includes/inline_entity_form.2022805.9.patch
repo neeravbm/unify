@@ -1,0 +1,54 @@
+diff --git a/includes/node.inline_entity_form.inc b/includes/node.inline_entity_form.inc
+index ceccb3a..3c1751f 100644
+--- a/includes/node.inline_entity_form.inc
++++ b/includes/node.inline_entity_form.inc
+@@ -72,6 +72,49 @@ class NodeInlineEntityFormController extends EntityInlineEntityFormController {
+   }
+ 
+   /**
++   * Overrides EntityInlineEntityFormController::entityFormValidate().
++   * Validates the entity form by calling node_validate.
++   */
++  public function entityFormValidate($entity_form, &$form_state) {
++    parent::entityFormValidate($entity_form, $form_state);
++
++    // When saving a node we need to properly instantiate node_validate and hook_node_validate
++    // These function assume they are validating an entire form, but in this instance they are acutally only validating a form-element
++    // To ensure proper behavior we need to reset the static errors and validation-limits (see form_set_error function)
++    // Once node_validate has done it's work we then merge any validation errors back into the overall error set.
++
++    // Reset the validation limits
++    $validation_limits = &drupal_static('form_set_error:limit_validation_errors');
++    $saved_validation_limits = $validation_limits;
++    $validation_limits = NULL;
++
++    // Reset the static errors array
++    $form_errors = &drupal_static('form_set_error', array());
++    $saved_form_errors = $form_errors;
++    $form_errors = array();
++
++    // Run the form-validators
++    $child_form_state = form_state_defaults();
++    $child_form_state['values'] = drupal_array_get_nested_value($form_state['values'], $entity_form['#parents']);
++    node_validate($entity_form['#entity'], $entity_form, $child_form_state);
++
++    // Get the form errors and correct their path to point to the proper element within the subform
++    $errors = form_get_errors();
++    if (!empty($errors)) {
++      $parents_path = implode('][', $entity_form['#parents']);
++      foreach ($errors as $errpath => $error) {
++        $form_errors[$parents_path . '][' . $errpath] = $error;
++      }
++    }
++
++    // Put saved errors back in place
++    $form_errors = array_merge($form_errors, $saved_form_errors);
++
++    // Put saved validation limits back in place
++    $validation_limits = $saved_validation_limits;
++  }
++
++  /**
+    * Overrides EntityInlineEntityFormController::entityFormSubmit().
+    */
+   public function entityFormSubmit(&$entity_form, &$form_state) {

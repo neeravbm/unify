@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+function menu_ul_attributes_schema() {
+  $t = get_t();
+
+  return array(
+    'menu_ul_attributes' => array(
+      'title' => $t('Menu ul attributes'),
+      'description' => $t('Attributes on Menu UL tag.'),
+      'fields' => array(
+        'menu_name' => array(
+          'description' => $t('Menu name'),
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+        ),
+        'attributes' => array(
+          'description' => $t('Attributes'),
+          'type' => 'varchar',
+          'length' => 2047,
+          'not null' => FALSE,
+        ),
+      ),
+      'primary key' => array('menu_name'),
+      'foreign keys' => array(
+        'menu_name' => array(
+          'table' => 'menu_custom',
+          'columns' => array('menu_name' => 'menu_name'),
+        ),
+      ),
+    ),
+  );
+}

@@ -1,0 +1,210 @@
+<?php
+
+/**
+ * Implements hook_form_FORM_ID_alter() for menu_edit_menu form.
+ */
+function menu_ul_attributes_form_menu_edit_menu_alter(&$form, &$form_state) {
+  $menu_name = $form['old_name']['#value'];
+
+  module_load_include('inc', 'menu_ul_attributes', 'menu_ul_attributes.admin');
+  $attributes = menu_ul_attributes_get_values($menu_name);
+
+  $id = !empty($attributes['id']) ? $attributes['id'] : '';
+  //$classes = !empty($attributes['classes']) ? $attributes['classes'] : '';
+
+  //$attributes = menu_ul_attributes_get_values($)
+  $form['attributes'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Attributes'),
+  );
+
+  $form['attributes']['id'] = array(
+    '#title' => t('ID'),
+    '#type' => 'textfield',
+    '#size' => 32,
+  );
+
+  $form['attributes']['classes'] = array(
+    '#title' => t('Classes'),
+    '#type' => 'fieldset',
+    '#tree' => TRUE,
+  );
+
+  foreach (range(0, 5) as $level) {
+    $form['attributes']['classes'][$level] = array(
+      '#title' => t('Level @level', array('@level' => $level)),
+      '#type' => 'textfield',
+      '#size' => 32,
+      '#default_value' => !empty($attributes['classes'][$level]) ? $attributes['classes'][$level] : '',
+    );
+  }
+
+  $form['#submit'][] = 'menu_ul_attributes_menu_edit_menu_submit';
+}
+
+/**
+ * Submit handler for menu edit form.
+ *
+ * @param array $form
+ *   Form array.
+ * @param array $form_state
+ *   Form state array
+ */
+function menu_ul_attributes_menu_edit_menu_submit($form, &$form_state) {
+  $old_menu_name = check_plain($form_state['values']['old_name']);
+  $menu_name = check_plain($form_state['values']['menu_name']);
+  $id = check_plain($form_state['values']['id']);
+  $classes = $form_state['values']['classes'];
+
+  $attributes = array(
+    'id' => $id,
+    'classes' => $classes,
+  );
+
+  module_load_include('inc', 'menu_ul_attributes', 'menu_ul_attributes.admin');
+  if ($menu_name != $old_menu_name) {
+    menu_ul_attributes_delete_menu_attributes($old_menu_name);
+  }
+
+  menu_ul_attributes_set_values($menu_name, $attributes);
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+/*function menu_ul_attributes_theme_registry_alter(&$theme_registry) {
+  $mod_path = drupal_get_path('module', 'menu_ul_attributes') . '/templates';
+  $theme_registry_copy = $theme_registry;       // munge on a copy
+  _theme_process_registry(
+    $theme_registry_copy,
+    'phptemplate',
+    'theme_engine',
+    'menu_ul_attributes',
+    $mod_path
+  );
+  $theme_registry += array_diff_key($theme_registry_copy, $theme_registry);
+  /*$theme_registry['menu_tree']['theme path'] = drupal_get_path('module', 'menu_ul_attributes');
+  $theme_registry['menu_tree']['function'] = 'menu_ul_attributes_menu_tree';*/
+/*$hooks = array('node', 'block');
+foreach ($hooks as $h) {
+  _owlcarousel2_insert_after_first_element(
+    $theme_registry[$h]['theme paths'],
+    $mod_path
+  );
+}
+}
+
+/*function menu_ul_attributes_menu_tree($variables) {
+dsm($variables);
+return '<ul class="menu">' . $variables['tree'] . '</ul>';
+}*/
+
+function menu_ul_attributes_theme() {
+  module_load_include('inc', 'menu_ul_attributes', 'menu_ul_attributes.admin');
+  $menu_names = menu_ul_attributes_get_all_menu_names();
+
+  $theme = array();
+  foreach ($menu_names as $menu_name) {
+    $theme['menu_tree__menu_block__' . str_replace(
+      '-',
+      '_',
+      $menu_name
+    )] = array(
+      'render element' => 'tree',
+      'function' => 'menu_ul_attributes_menu_tree_menu_block',
+      'preprocess functions' => array(
+        'menu_ul_attributes_preprocess_menu_tree_menu_block_ul',
+      ),
+    );
+  }
+
+  return $theme;
+}
+
+function menu_ul_attributes_preprocess_menu_tree(&$vars) {
+  $a = $vars;
+}
+
+function menu_ul_attributes_preprocess_menu_block_wrapper(&$vars) {
+  $a = $vars;
+  $menu_name = $vars['config']['menu_name'];
+  module_load_include('inc', 'menu_ul_attributes', 'menu_ul_attributes.admin');
+  $attributes = menu_ul_attributes_get_values($menu_name);
+
+  if (!sizeof($attributes)) {
+    return;
+  }
+
+  menu_ul_attributes_add_menu_levels($vars['content']);
+  /*corporate_crackle_add_menu_levels($vars['content']);
+  $content = &$vars['content'];
+
+  foreach (element_children($content) as $key) {
+    $content[$key]['#attributes']['class'][] = 'dropdown';
+  }*/
+}
+
+function menu_ul_attributes_add_menu_levels(&$vars, $level = 0) {
+  $children = element_children($vars);
+  if (sizeof($children)) {
+    $vars['#level'] = $level;
+    foreach ($children as $key) {
+      menu_ul_attributes_add_menu_levels($vars[$key], $level + 1);
+    }
+  }
+  elseif (sizeof($vars['#below'])) {
+    $vars['#below']['#level'] = $level;
+    foreach (element_children($vars['#below']) as $key) {
+      menu_ul_attributes_add_menu_levels($vars['#below'][$key], $level + 1);
+    }
+  }
+}
+
+function menu_ul_attributes_preprocess_menu_tree_menu_block_ul(&$vars) {
+  if (isset($vars['tree']['#level'])) {
+    $vars['#level'] = $vars['tree']['#level'];
+  }
+  $vars['tree'] = $vars['tree']['#children'];
+}
+
+function menu_ul_attributes_menu_tree_menu_block($vars) {
+  list(, , $menu_name) = explode('__', $vars['theme_hook_original']);
+  $menu_name = str_replace('_', '-', $menu_name);
+
+  module_load_include('inc', 'menu_ul_attributes', 'menu_ul_attributes.admin');
+  $attributes = menu_ul_attributes_get_values($menu_name);
+
+  $level = '';
+  if (isset($vars['#level'])) {
+    $level = $vars['#level'];
+  }
+
+  $id = '';
+  $classes = '';
+  if ($level === 0 && !empty($attributes['id'])) {
+    $id = $attributes['id'];
+  }
+  if (isset($level) && !empty($attributes['classes'][$level])) {
+    $classes = $attributes['classes'][$level];
+  }
+
+  $output = '<ul class="menu';
+  if (!empty($attributes['classes'])) {
+    $output .= ' ' . $classes;
+  }
+  $output .= '"';
+  if (!empty($attributes['id'])) {
+    $output .= ' id="' . $attributes['id'] . '""';
+  }
+  $output .= '>' . $vars['tree'] . '</ul>';
+
+  return $output;
+}
+
+/**
+ * Implements hook_menu_delete().
+ */
+function menu_ul_attributes_menu_delete($menu) {
+  module_load_include('inc', 'menu_ul_attributes', 'menu_ul_attributes.admin');
+  menu_ul_attributes_delete_menu_attributes($menu['menu_name']);
+}

@@ -1,0 +1,70 @@
+<?php
+
+/**
+ * Implements hook_form_FORM_ID_alter() for menu_edit_menu form.
+ */
+function rc_megamenu_form_menu_edit_item_alter(&$form, &$form_state) {
+  $mlid = !empty($form['mlid']['#value']) ? $form['mlid']['#value'] : '';
+
+  $status = 0;
+  $content = '';
+  $text_format = 'plain_text';
+  if ($mlid) {
+    module_load_include('inc', 'rc_megamenu', 'rc_megamenu.admin');
+    $result = rc_megamenu_get($mlid);
+    if (isset($result['status'])) {
+      $status = $result['status'];
+    }
+    if (isset($result['content'])) {
+      $content = $result['content'];
+    }
+    if (isset($result['text_format'])) {
+      $text_format = $result['text_format'];
+    }
+  }
+
+  $form['show_rc_megamenu'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Show Mega Menu Dropdown'),
+    '#default_value' => $status,
+  );
+
+  $form['rc_megamenu_content_container'] = array(
+    '#type' => 'container',
+    '#states' => array(
+      'visible' => array(
+        'input[name=show_rc_megamenu]' => array('checked' => TRUE),
+      ),
+    ),
+  );
+
+  $form['rc_megamenu_content_container']['rc_megamenu_content'] = array(
+    '#type' => 'text_format',
+    '#title' => t('Mega Menu Content'),
+    '#default_value' => $content,
+    '#format' => $text_format,
+  );
+
+  $form['#submit'][] = 'rc_megamenu_form_menu_edit_item_submit';
+}
+
+/**
+ * Submit handler for mega edit item form.
+ */
+function rc_megamenu_form_menu_edit_item_submit($form, &$form_state) {
+  $mlid = $form_state['values']['mlid'];
+  $show = $form_state['values']['show_rc_megamenu'];
+  $content = $form_state['values']['rc_megamenu_content']['value'];
+  $text_format = $form_state['values']['rc_megamenu_content']['format'];
+
+  module_load_include('inc', 'rc_megamenu', 'rc_megamenu.admin');
+  rc_megamenu_set($mlid, $show, $content, $text_format);
+}
+
+/**
+ * Implements hook_menu_link_delete().
+ */
+function rc_megamenu_menu_link_delete($link) {
+  module_load_include('inc', 'rc_megamenu', 'rc_megamenu.admin');
+  rc_megamenu_delete($link['mlid']);
+}

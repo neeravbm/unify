@@ -1,0 +1,5 @@
+name = Owl Carousel 2
+description = Create an owl carousel based on fields instead of view.
+core = 7.x
+files[] = owlcarousel2.module
+files[] = views_owlcarousel2_plugin_style_owlcarousel2.inc

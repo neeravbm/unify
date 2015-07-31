@@ -1,0 +1,5 @@
+name = Menu UL Attributes
+description = Attributes for the menu ul element
+core = 7.x
+files[] = menu_ul_attributes.module
+dependencies[] = menu_block

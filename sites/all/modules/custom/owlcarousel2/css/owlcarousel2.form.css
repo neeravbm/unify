@@ -1,0 +1,14 @@
+/*#edit-items #edit-rows .form-type-textfield {
+    display: inline;
+}*/
+
+.owlcarousel2-rows .form-type-textfield {
+    display: inline;
+}
+
+#owl-carousel-slideshow-node-form .form-item-nav-prev-text label,
+#owl-carousel-slideshow-node-form .form-item-nav-next-text label,
+#owl-carousel-slideshow-node-form .form-item-margin label,
+#owl-carousel-slideshow-node-form .form-item-stagePadding label {
+    display: inline;
+}

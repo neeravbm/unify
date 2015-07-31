@@ -1,0 +1,45 @@
+<?php
+
+function rc_megamenu_schema() {
+  $t = get_t();
+
+  $schema['rc_megamenu_content'] = array(
+    'description' => $t('Mega menu content'),
+    'fields' => array(
+      'mlid' => array(
+        'description' => $t('Menu link id'),
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'status' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => $t('Mega menu status'),
+      ),
+      'content' => array(
+        'description' => $t('Mega menu content'),
+        'type' => 'varchar',
+        'length' => 2047,
+        'not null' => FALSE,
+      ),
+      'text_format' => array(
+        'description' => $t('Text format'),
+        'type' => 'varchar',
+        'length' => 127,
+        'not null' => TRUE,
+      ),
+    ),
+    'primary key' => array('mlid'),
+    'foreign keys' => array(
+      'menu_links' => array(
+        'table' => 'menu_links',
+        'columns' => array('mlid' => 'mlid'),
+      ),
+    ),
+  );
+
+  return $schema;
+}
